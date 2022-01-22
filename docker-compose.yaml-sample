@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  portainer:
+    image: portainer/agent
+    container_name: portainer
+    restart: unless-stopped
+    ports:
+      - 9001:9001
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/etc/localtime:/etc/localtime:ro"
+      
+  miveil:
+    image: pierrecle/miveil:develop
+    container_name: miveil
+    restart: unless-stopped
+    privileged: true

@@ -8,7 +8,8 @@ sudo apt upgrade -y
 ####################################
 # Deps
 ####################################
-sudo apt install -y vim git docker docker-compose
+sudo apt install -y vim git docker docker-compose curl
+
 
 ####################################
 # Turn off LEDS
@@ -29,8 +30,29 @@ WantedBy=multi-user.target
 EOF
 sudo systemctl enable disable-led.service
 
+
 ####################################
 # Setup Pi
 ####################################
 sudo raspi-config nonint do_spi 0
 sudo raspi-config nonint do_i2c 0
+
+
+####################################
+# Setup docker
+####################################
+curl -o ${HOME}/docker-compose.yaml https://raw.githubusercontent.com/pierrecle/miveil/develop/docker-compose.yaml-sample
+sudo docker-compose up -d
+
+
+####################################
+# Clean up
+####################################
+sudo apt autoremove -y
+
+
+####################################
+# Reboot
+####################################
+echo "Pi will reboot now!"
+sudo reboot

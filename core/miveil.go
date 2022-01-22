@@ -18,7 +18,7 @@ type Miveil struct {
 }
 
 func NewMiveil() Miveil {
-	animation, _ := Gif2Animation(128, 64, "./pikachu.gif")
+	animation, _ := Gif2Animation(128, 64, "./ressources/pikachu.gif")
 	screen, _ := devices.NewScreen()
 
 	miveil := Miveil{

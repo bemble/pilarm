@@ -20,5 +20,6 @@ FROM scratch
 COPY --from=server-builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY --from=server-builder /usr/share/zoneinfo /usr/share/zoneinfo
 COPY --from=server-builder /app/miveil /app/miveil
+COPY --from=server-builder /app/ressources /app/ressources
 
 ENTRYPOINT ["/app/miveil"]
