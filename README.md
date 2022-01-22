@@ -21,7 +21,7 @@ In action, it's pretty simple: a sonar listen for moves, when a move is detected
 
 Use [Raspberry Pi Imager](https://www.raspberrypi.com/software/) to install the latest version of `Raspbian Lite`.
 
-Before writing data on the SD cardn, press on `SHIFT+CTRL+X` to enter default options:
+Before writing data on the SD card, press on `SHIFT+CTRL+X` to enter default options:
 - set the `hostname`
 - enable `SSH`
 - configure `wifi` (remember that some Pi such as Zero does not support 5Ghz wifi)
