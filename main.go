@@ -7,7 +7,7 @@ import (
 	"github.com/stianeikeland/go-rpio/v4"
 	"periph.io/x/host/v3"
 
-	"miveil/core"
+	"miveil/miveil"
 )
 
 // Add process env + config
@@ -28,7 +28,7 @@ func init() {
 
 func main() {
 	defer rpio.Close()
-	miveil := core.NewMiveil()
+	miveil := miveil.NewMiveil()
 
 	// does not work: defer miveil.Stop()
 	miveil.Start()

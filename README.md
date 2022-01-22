@@ -49,7 +49,7 @@ go run main.go
 
 ## Todo
 
-- [ ] `chore`/move `miveil.go` somewhere else
+- [x] `chore`/move `miveil.go` somewhere else
 - [ ] `feat`/track when sonar is triggered
 - [ ] `feat`/handle RTC `DS3231`
 - [ ] `feat`/make RTC optional
