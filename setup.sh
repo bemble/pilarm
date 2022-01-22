@@ -13,7 +13,6 @@ sudo apt install -y vim git docker docker-compose curl
 
 ####################################
 # Turn off LEDS
-# https://n.ethz.ch/~dbernhard/disable-led-on-a-raspberry-pi.html
 ####################################
 cat <<EOF | sudo tee -a /etc/systemd/system/disable-led.service
 [Unit]
