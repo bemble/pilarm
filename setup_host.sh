@@ -8,7 +8,7 @@ sudo apt upgrade -y
 ####################################
 # Deps
 ####################################
-sudo apt install -y vim git
+sudo apt install -y vim git docker docker-compose
 
 ####################################
 # Turn off LEDS

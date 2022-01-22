@@ -10,6 +10,8 @@ import (
 	"miveil/core"
 )
 
+// Add process env + config
+
 func init() {
 	log.SetLevel(log.FatalLevel)
 
