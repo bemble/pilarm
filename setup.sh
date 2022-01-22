@@ -53,5 +53,6 @@ sudo apt autoremove -y
 ####################################
 # Reboot
 ####################################
-echo "Pi will reboot now!"
+echo "Pi will reboot in 10 seconds! Don't forget, onboard power and state leds will be disabled after reboot."
+sleep 10
 sudo reboot
