@@ -35,6 +35,18 @@ It will create a `docker-compose.yaml` file in home with the content of the samp
 curl -s https://raw.githubusercontent.com/pierrecle/miveil/develop/setup.sh | bash -s
 ```
 
+## Development
+
+On your Pi, install go:
+```bash
+sudo apt install golang
+```
+
+Then, edit files (with VSCode and Go add-on, everyhting is way easier) and run:
+```bash
+go run main.go
+```
+
 ## Todo
 
 - [ ] `chore`/move `miveil.go` somewhere else
