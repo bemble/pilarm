@@ -2,10 +2,13 @@ package devices
 
 import (
 	"image"
+	"miveil/core"
 	"time"
 
 	"periph.io/x/conn/v3/i2c/i2creg"
 	"periph.io/x/devices/v3/ssd1306"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type Screen struct {
@@ -29,18 +32,31 @@ func NewScreen() (*Screen, error) {
 	dev.SetContrast(0x00)
 	dev.Halt()
 
+	log.Debug(dev)
+
 	s := Screen{dev: dev}
 
 	return &s, nil
 }
 
-func (s *Screen) PlayAnimation(animation []*image.Gray) {
+func (s *Screen) Bounds() image.Rectangle {
+	return s.dev.Bounds()
+}
+
+func (s *Screen) PlayAnimation(animation *core.Animation) {
 	if !s.isPlaying {
 		s.isPlaying = true
-		for i := 0; i < len(animation); i++ {
-			c := time.After(10 * time.Millisecond)
-			img := animation[i]
-			s.dev.Draw(img.Bounds(), img, image.Point{})
+		currentFrame := 0
+
+		for i := 0; i < len(animation.Sequence); i++ {
+			c := time.After(animation.FrameDuration[currentFrame])
+			img := animation.Frames[currentFrame]
+			//log.Debug(img.Bounds(), animation.Sequence[i])
+
+			currentImage := core.CreateFrame(s.dev.Bounds().Dx(), s.dev.Bounds().Dy(), img, *animation.Sequence[i])
+
+			s.dev.Draw(currentImage.Bounds(), currentImage, image.Point{})
+			currentFrame = (currentFrame + 1) % len(animation.Frames)
 			<-c
 		}
 		s.dev.Halt()

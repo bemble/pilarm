@@ -5,20 +5,32 @@ import (
 	"image/draw"
 	"image/gif"
 	"os"
-
-	"github.com/nfnt/resize"
+	"time"
 )
 
-func convertAndResizeAndCenter(w, h int, src image.Image, xOffsetPercent float64) *image.Gray {
-	src = resize.Thumbnail(uint(w), uint(h), src, resize.Bicubic)
-	img := image.NewGray(image.Rect(0, 0, w, h))
+type Animation struct {
+	Frames        []*image.Gray
+	FrameDuration []time.Duration
+	Sequence      []*image.Point
+}
+
+func convertToGray(src image.Image) *image.Gray {
 	r := src.Bounds()
-	r = r.Add(image.Point{int(float64(w*2)*xOffsetPercent) - w, (h - r.Max.Y) / 2})
+	img := image.NewGray(r)
+	r = r.Add(image.Point{})
 	draw.Draw(img, r, src, image.Point{}, draw.Src)
 	return img
 }
 
-func Gif2Animation(w int, h int, path string) ([]*image.Gray, error) {
+func CreateFrame(w int, h int, src *image.Gray, offset image.Point) *image.Gray {
+	img := image.NewGray(image.Rect(0, 0, w, h))
+	r := src.Bounds()
+	r = r.Add(offset)
+	draw.Draw(img, r, src, image.Point{}, draw.Src)
+	return img
+}
+
+func Gif2Animation(w int, h int, path string, duration time.Duration) (*Animation, error) {
 	f, err := os.Open(path)
 	if err != nil {
 		return nil, err
@@ -29,13 +41,27 @@ func Gif2Animation(w int, h int, path string) ([]*image.Gray, error) {
 		return nil, err
 	}
 
-	animationStep := 0.05
-	animation := make([]*image.Gray, int(1/animationStep))
-	currentFrame := 0
-	for i := 0; i < len(animation); i++ {
-		animation[i] = convertAndResizeAndCenter(w, h, g.Image[currentFrame], float64(i)*animationStep)
-		currentFrame = (currentFrame + 1) % len(g.Image)
+	animation := Animation{
+		Frames:        make([]*image.Gray, len(g.Image)),
+		FrameDuration: make([]time.Duration, len(g.Image)),
+		Sequence:      []*image.Point{},
 	}
 
-	return animation, nil
+	totalAnimationDuration := time.Duration(0)
+	for currentFrame := 0; currentFrame < len(g.Image); currentFrame++ {
+		animation.Frames[currentFrame] = convertToGray(g.Image[currentFrame])
+		animation.FrameDuration[currentFrame] = time.Duration(10*g.Delay[currentFrame]) * time.Millisecond
+		totalAnimationDuration += animation.FrameDuration[currentFrame]
+	}
+
+	totalWidth := g.Config.Width + w
+	totalLoops := float64(duration / totalAnimationDuration)
+
+	increment := totalWidth / (int(totalLoops) * len(g.Image))
+
+	for i := -g.Config.Width; i <= w; i += increment {
+		animation.Sequence = append(animation.Sequence, &image.Point{i, 0})
+	}
+
+	return &animation, nil
 }

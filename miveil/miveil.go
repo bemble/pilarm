@@ -1,7 +1,6 @@
 package miveil
 
 import (
-	"image"
 	"miveil/core"
 	"miveil/devices"
 	"time"
@@ -17,12 +16,12 @@ type Miveil struct {
 	currentLed         *devices.Led
 	scheduler          core.Scheduler
 	wasOn              bool
-	canWakeUpAnimation []*image.Gray
+	canWakeUpAnimation *core.Animation
 }
 
 func NewMiveil() Miveil {
-	animation, _ := core.Gif2Animation(128, 64, "./ressources/pikachu.gif")
 	screen, _ := devices.NewScreen()
+	animation, _ := core.Gif2Animation(screen.Bounds().Dx(), screen.Bounds().Dy(), "./ressources/pikachu.gif", 1500*time.Millisecond)
 
 	miveil := Miveil{
 		canWakeUpLed:       devices.NewLed(27), //rpi.P1_13
@@ -43,9 +42,10 @@ func NewMiveil() Miveil {
 func (m *Miveil) sonarCallback(d float32) {
 	if d <= 0.6 {
 		m.wasOn = true
-		led := m.canWakeUpLed
-		if !m.scheduler.CanWakeUp {
-			led = m.stayInBedLed
+		led := m.stayInBedLed
+		if m.scheduler.CanWakeUp {
+			led = m.canWakeUpLed
+			go m.screen.PlayAnimation(m.canWakeUpAnimation)
 		}
 		if m.currentLed != nil && led != *m.currentLed {
 			m.currentLed.TurnOff()
@@ -56,14 +56,13 @@ func (m *Miveil) sonarCallback(d float32) {
 		if m.wasOn {
 			log.WithFields(log.Fields{"component": "hardware", "category": "sonar"}).Info("Triggered")
 			m.wasOn = false
-			ledDuration := 1 * time.Second
-			if m.scheduler.CanWakeUp {
-				ledDuration = 2 * time.Second
-				go m.screen.PlayAnimation(m.canWakeUpAnimation)
-			}
-
 			if m.currentLed != nil {
 				go func() {
+					ledDuration := 1 * time.Second
+					if m.scheduler.CanWakeUp {
+						ledDuration = 2 * time.Second
+					}
+
 					m.currentLed.TurnOnFor(ledDuration)
 					m.currentLed = nil
 				}()
