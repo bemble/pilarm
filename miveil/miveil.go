@@ -16,7 +16,12 @@ type Miveil struct {
 	currentLed         *devices.Led
 	scheduler          core.Scheduler
 	wasOn              bool
+	sonarOnSince       int64
 	canWakeUpAnimation *core.Animation
+}
+
+func makeTimestamp() int64 {
+	return time.Now().UnixNano() / (int64(time.Millisecond) / int64(time.Nanosecond))
 }
 
 func NewMiveil() Miveil {
@@ -31,6 +36,7 @@ func NewMiveil() Miveil {
 		currentLed:         nil,
 		scheduler:          core.NewScheduler(),
 		wasOn:              false,
+		sonarOnSince:       0,
 		canWakeUpAnimation: animation,
 	}
 
@@ -41,18 +47,26 @@ func NewMiveil() Miveil {
 
 func (m *Miveil) sonarCallback(d float32) {
 	if d <= 0.6 {
-		m.wasOn = true
-		led := m.stayInBedLed
-		if m.scheduler.CanWakeUp {
-			led = m.canWakeUpLed
-			go m.screen.PlayAnimation(m.canWakeUpAnimation)
+		if m.sonarOnSince == 0 {
+			m.sonarOnSince = makeTimestamp()
+			return
 		}
-		if m.currentLed != nil && led != *m.currentLed {
-			m.currentLed.TurnOff()
+		if makeTimestamp()-m.sonarOnSince > 100 {
+			log.WithFields(log.Fields{"component": "hardware", "category": "sonar"}).Debug("triggered while ", makeTimestamp()-m.sonarOnSince, "ms")
+			m.wasOn = true
+			led := m.stayInBedLed
+			if m.scheduler.CanWakeUp {
+				led = m.canWakeUpLed
+				go m.screen.PlayAnimation(m.canWakeUpAnimation)
+			}
+			if m.currentLed != nil && led != *m.currentLed {
+				m.currentLed.TurnOff()
+			}
+			m.currentLed = &led
+			m.currentLed.TurnOn()
 		}
-		m.currentLed = &led
-		m.currentLed.TurnOn()
 	} else {
+		m.sonarOnSince = 0
 		if m.wasOn {
 			log.WithFields(log.Fields{"component": "hardware", "category": "sonar"}).Info("Triggered")
 			m.wasOn = false
