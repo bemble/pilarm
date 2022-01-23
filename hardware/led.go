@@ -41,3 +41,7 @@ func (l *Led) TurnOn() error {
 func (l *Led) TurnOff() error {
 	return l.turn(false, false)
 }
+
+func (l *Led) ShutDown() error {
+	return l.turn(false, true)
+}

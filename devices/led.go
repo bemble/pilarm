@@ -36,3 +36,7 @@ func (l *Led) Toggle() error {
 		return l.dev.TurnOn()
 	}
 }
+
+func (l *Led) Stop() error {
+	return l.dev.ShutDown()
+}

@@ -73,14 +73,13 @@ func (m *Miveil) sonarCallback(d float32) {
 }
 
 func (m *Miveil) Start() {
-	m.scheduler.Start()
-	m.sonar.Start()
-
-	for {
-	}
+	go m.scheduler.Start()
+	go m.sonar.Start()
 }
 
 func (m *Miveil) Stop() {
-	m.canWakeUpLed.TurnOff()
-	m.stayInBedLed.TurnOff()
+	m.canWakeUpLed.Stop()
+	m.stayInBedLed.Stop()
+	m.sonar.Stop()
+	m.screen.Stop()
 }

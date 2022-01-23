@@ -23,20 +23,20 @@ func (r *Sonar) AddCallback(f func(float32)) {
 }
 
 func (r *Sonar) Start() {
-	go func() {
-		if err := r.h.StartDistanceMonitor(); err != nil {
-			log.Fatal("impossible to start distance monitor")
-		} else {
-			defer r.h.StopDistanceMonitor()
-		}
-		for {
-			distance := r.h.GetDistance()
-			if distance > 0 {
-				for i := 0; i < len(r.onMeasureCallbacks); i++ {
-					r.onMeasureCallbacks[i](distance)
-				}
-				time.Sleep(hardware.HCSR04MonitorUpdate)
+	if err := r.h.StartDistanceMonitor(); err != nil {
+		log.Fatal("impossible to start distance monitor")
+	}
+	for {
+		distance := r.h.GetDistance()
+		if distance > 0 {
+			for i := 0; i < len(r.onMeasureCallbacks); i++ {
+				r.onMeasureCallbacks[i](distance)
 			}
+			time.Sleep(hardware.HCSR04MonitorUpdate)
 		}
-	}()
+	}
+}
+
+func (r *Sonar) Stop() {
+	r.h.StopDistanceMonitor()
 }

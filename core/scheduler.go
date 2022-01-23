@@ -21,10 +21,8 @@ func NewScheduler() Scheduler {
 }
 
 func (s *Scheduler) Start() {
-	go func() {
-		for {
-			s.CanWakeUp = canWakeUp()
-			time.Sleep(1 * time.Second)
-		}
-	}()
+	for {
+		s.CanWakeUp = canWakeUp()
+		time.Sleep(25 * time.Second)
+	}
 }

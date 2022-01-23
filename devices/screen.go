@@ -47,3 +47,7 @@ func (s *Screen) PlayAnimation(animation []*image.Gray) {
 		s.isPlaying = false
 	}
 }
+
+func (s *Screen) Stop() {
+	s.dev.Halt()
+}

@@ -49,35 +49,35 @@ go run main.go
 
 ## Todo
 
-- [x] `chore`/move `miveil.go` somewhere else
-- [x] `feat`/implement `hcsr04` using `periph.io`
-- [ ] `feat`/clean up on quit (reset gpio etc)
-- [x] `feat`/track when sonar is triggered
-- [ ] `feat`/handle RTC `DS3231`
-- [ ] `feat`/make RTC optional
-- [ ] `feat`/make screen optional
-- [ ] `feat`/remove hard coded values
+- [x] `chore` move `miveil.go` somewhere else
+- [x] `feat` implement `hcsr04` using `periph.io`
+- [x] `feat` clean up on quit
+- [x] `feat` track when sonar is triggered
+- [ ] `feat` handle RTC `DS3231`
+- [ ] `feat` make RTC optional
+- [ ] `feat` make screen optional
+- [ ] `feat` remove hard coded values
   - [ ] times
   - [ ] pinning
   - [ ] sonar maximum distance
   - [ ] display duration
   - [ ] animation
-- [ ] `feat`/make different inputs configurable
-- [ ] `doc`/make a video
-- [ ] `doc`/draw pinning
-- [ ] `doc`/write technical documentation
-- [ ] `hardware`/make a PCB :warning: help needed
-- [ ] `hardware`/make a 3D printable basic case
-- [ ] `chore`/handle releases with workflow etc
-- [ ] `chore`/write update process when not using portainer
-- [ ] `feat`/display current time after animation when can wake up
-- [ ] `feat`/create an OSD to display basic information (hostname, ip, wifi, current time)
-- [ ] `feat`/add a physical buttons to handle OSD
-- [ ] `feat`/create an API to change values
-- [ ] `feat`/handle wake up (morning where child should wake up at a precise time, for school etc)
-- [ ] `BONUS`/handle HUE lights to wake up
-- [ ] `BONUS`/front-end app
-- [ ] `BONUS`/HASS module
+- [ ] `feat` make different inputs configurable
+- [ ] `doc` make a video
+- [ ] `doc` draw pinning
+- [ ] `doc` write technical documentation
+- [ ] `hardware` make a PCB :warning: help needed
+- [ ] `hardware` make a 3D printable basic case
+- [ ] `chore` handle releases with workflow etc
+- [ ] `chore` write update process when not using portainer
+- [ ] `feat` display current time after animation when can wake up
+- [ ] `feat` create an OSD to display basic information (hostname, ip, wifi, current time)
+- [ ] `feat` add a physical buttons to handle OSD
+- [ ] `feat` create an API to change values
+- [ ] `feat` handle wake up (morning where child should wake up at a precise time, for school etc)
+- [ ] `BONUS` handle HUE lights to wake up
+- [ ] `BONUS` front-end app
+- [ ] `BONUS` HASS/MQTT
 
 ## Ressources
 
