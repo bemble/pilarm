@@ -32,7 +32,7 @@ Before writing data on the SD card, press on `SHIFT+CTRL+X` to enter default opt
 It will create a `docker-compose.yaml` file in home with the content of the sample given.
 
 ```bash
-curl -s https://raw.githubusercontent.com/pierrecle/miveil/develop/setup.sh | bash -s
+wget https://raw.githubusercontent.com/pierrecle/miveil/develop/setup.sh  -O - | bash
 ```
 
 ## Development

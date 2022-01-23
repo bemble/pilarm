@@ -1,5 +1,7 @@
 #!/bin/bash
 
+IS_PI_ZERO=`cat /proc/cpuinfo | grep "Zerow"`
+
 ####################################
 # Upgrade os
 ####################################
@@ -21,8 +23,8 @@ Description=Disables the power-LED and active-LED
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=sh -c "echo 0 | sudo tee /sys/class/leds/led1/brightness > /dev/null && echo 0 | sudo tee /sys/class/leds/led0/brightness"
-ExecStop=sh -c "echo 1 | sudo tee /sys/class/leds/led1/brightness > /dev/null && echo 1 | sudo tee /sys/class/leds/led0/brightness"
+ExecStart=sh -c "echo 0 | sudo tee /sys/class/leds/led*/brightness > /dev/null"
+ExecStop=sh -c "echo 1 | sudo tee /sys/class/leds/led*/brightness > /dev/null"
 
 [Install]
 WantedBy=multi-user.target
