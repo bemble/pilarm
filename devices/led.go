@@ -1,38 +1,26 @@
 package devices
 
 import (
-	"strconv"
 	"time"
 
-	"periph.io/x/conn/v3/gpio"
-	"periph.io/x/conn/v3/gpio/gpioreg"
+	"miveil/hardware"
 )
 
 type Led struct {
-	port gpio.PinIO
-	IsOn bool
+	dev hardware.Led
 }
 
 func NewLed(portNumber int) Led {
-	l := Led{port: gpioreg.ByName(strconv.Itoa(portNumber))}
-	l.turn(false, true)
-	return l
+	dev := hardware.NewLed(portNumber)
+	return Led{dev: dev}
 }
 
-func (l *Led) turn(on bool, force bool) error {
-	if on == l.IsOn && !force {
-		return nil
-	}
+func (l *Led) TurnOn() error {
+	return l.dev.TurnOn()
+}
 
-	newValue := gpio.High
-	if !on {
-		newValue = gpio.Low
-	}
-	err := l.port.Out(newValue)
-	if err == nil {
-		l.IsOn = on
-	}
-	return err
+func (l *Led) TurnOff() error {
+	return l.dev.TurnOff()
 }
 
 func (l *Led) TurnOnFor(duration time.Duration) {
@@ -41,18 +29,10 @@ func (l *Led) TurnOnFor(duration time.Duration) {
 	time.Sleep(duration)
 }
 
-func (l *Led) TurnOn() error {
-	return l.turn(true, false)
-}
-
-func (l *Led) TurnOff() error {
-	return l.turn(false, false)
-}
-
 func (l *Led) Toggle() error {
-	if l.IsOn {
-		return l.TurnOff()
+	if l.dev.IsOn {
+		return l.dev.TurnOff()
 	} else {
-		return l.TurnOn()
+		return l.dev.TurnOn()
 	}
 }

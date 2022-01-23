@@ -1,10 +1,8 @@
 package main
 
 import (
-	"os"
-
+	nested "github.com/antonfisher/nested-logrus-formatter"
 	log "github.com/sirupsen/logrus"
-	"github.com/stianeikeland/go-rpio/v4"
 	"periph.io/x/host/v3"
 
 	"miveil/miveil"
@@ -13,21 +11,19 @@ import (
 // Add process env + config
 
 func init() {
-	log.SetLevel(log.FatalLevel)
+	log.SetLevel(log.InfoLevel)
+	log.SetFormatter(&nested.Formatter{
+		HideKeys:    true,
+		FieldsOrder: []string{"component", "category"},
+	})
 
 	// Load all the drivers:
 	if _, err := host.Init(); err != nil {
 		log.Fatal(err)
 	}
-
-	err := rpio.Open()
-	if err != nil {
-		os.Exit(1)
-	}
 }
 
 func main() {
-	defer rpio.Close()
 	miveil := miveil.NewMiveil()
 
 	// does not work: defer miveil.Stop()

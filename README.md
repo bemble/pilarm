@@ -50,7 +50,9 @@ go run main.go
 ## Todo
 
 - [x] `chore`/move `miveil.go` somewhere else
-- [ ] `feat`/track when sonar is triggered
+- [x] `feat`/implement `hcsr04` using `periph.io`
+- [ ] `feat`/clean up on quit (reset gpio etc)
+- [x] `feat`/track when sonar is triggered
 - [ ] `feat`/handle RTC `DS3231`
 - [ ] `feat`/make RTC optional
 - [ ] `feat`/make screen optional
@@ -80,3 +82,4 @@ go run main.go
 ## Ressources
 
 - [Turn off leds on PI](https://n.ethz.ch/~dbernhard/disable-led-on-a-raspberry-pi.html)
+- [HCSR04 implementation with rpio](https://github.com/raspberrypi-go-drivers/hcsr04)
