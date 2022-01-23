@@ -51,7 +51,7 @@ func (m *Miveil) sonarCallback(d float32) {
 			m.sonarOnSince = makeTimestamp()
 			return
 		}
-		if makeTimestamp()-m.sonarOnSince > 100 {
+		if makeTimestamp()-m.sonarOnSince > 150 {
 			log.WithFields(log.Fields{"component": "hardware", "category": "sonar"}).Debug("triggered while ", makeTimestamp()-m.sonarOnSince, "ms")
 			m.wasOn = true
 			led := m.stayInBedLed
