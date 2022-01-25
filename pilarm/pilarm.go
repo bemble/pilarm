@@ -66,7 +66,14 @@ func (m *Pilarm) sonarCallback(d float32) {
 			return
 		}
 		if makeTimestamp()-m.sonarOnSince > 150 {
-			log.WithFields(log.Fields{"component": "hardware", "category": "sonar"}).Debug("triggered while ", makeTimestamp()-m.sonarOnSince, "ms")
+			if !m.wasOn {
+				log.WithFields(log.Fields{"component": "hardware", "category": "sonar"}).Debug("Sonar signal interuption for ", makeTimestamp()-m.sonarOnSince, "ms")
+				canWakeUpStr := "can wake up"
+				if !m.scheduler.CanWakeUp {
+					canWakeUpStr = "shoud stay in bed"
+				}
+				log.WithFields(log.Fields{"component": "hardware", "category": "sonar"}).Info("Triggered, ", canWakeUpStr)
+			}
 			m.wasOn = true
 			led := m.stayInBedLed
 			if m.scheduler.CanWakeUp {
@@ -84,7 +91,6 @@ func (m *Pilarm) sonarCallback(d float32) {
 	} else {
 		m.sonarOnSince = 0
 		if m.wasOn {
-			log.WithFields(log.Fields{"component": "hardware", "category": "sonar"}).Info("Triggered")
 			m.wasOn = false
 			if m.currentLed != nil {
 				go func() {
