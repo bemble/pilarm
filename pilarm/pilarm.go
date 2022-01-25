@@ -1,14 +1,14 @@
-package miveil
+package pilarm
 
 import (
-	"miveil/core"
-	"miveil/devices"
+	"pilarm/core"
+	"pilarm/devices"
 	"time"
 
 	log "github.com/sirupsen/logrus"
 )
 
-type Miveil struct {
+type Pilarm struct {
 	canWakeUpLed       devices.Led
 	stayInBedLed       devices.Led
 	sonar              devices.Sonar
@@ -24,11 +24,11 @@ func makeTimestamp() int64 {
 	return time.Now().UnixNano() / (int64(time.Millisecond) / int64(time.Nanosecond))
 }
 
-func NewMiveil() Miveil {
+func NewPilarm() Pilarm {
 	screen, _ := devices.NewScreen()
 	animation, _ := core.Gif2Animation(screen.Bounds().Dx(), screen.Bounds().Dy(), "./ressources/pikachu.gif", 1500*time.Millisecond)
 
-	miveil := Miveil{
+	pilarm := Pilarm{
 		canWakeUpLed:       devices.NewLed(27), //rpi.P1_13
 		stayInBedLed:       devices.NewLed(17), //rpi.P1_11
 		sonar:              devices.NewSonar(6, 13),
@@ -40,12 +40,12 @@ func NewMiveil() Miveil {
 		canWakeUpAnimation: animation,
 	}
 
-	miveil.sonar.AddCallback(miveil.sonarCallback)
+	pilarm.sonar.AddCallback(pilarm.sonarCallback)
 
-	return miveil
+	return pilarm
 }
 
-func (m *Miveil) sonarCallback(d float32) {
+func (m *Pilarm) sonarCallback(d float32) {
 	if d <= 0.6 {
 		if m.sonarOnSince == 0 {
 			m.sonarOnSince = makeTimestamp()
@@ -85,12 +85,12 @@ func (m *Miveil) sonarCallback(d float32) {
 	}
 }
 
-func (m *Miveil) Start() {
+func (m *Pilarm) Start() {
 	go m.scheduler.Start()
 	go m.sonar.Start()
 }
 
-func (m *Miveil) Stop() {
+func (m *Pilarm) Stop() {
 	m.canWakeUpLed.Stop()
 	m.stayInBedLed.Stop()
 	m.sonar.Stop()

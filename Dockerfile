@@ -11,7 +11,7 @@ ENV GO111MODULE=on
 
 ADD . /app
 WORKDIR /app
-RUN CGO_ENABLED=0 GOOS=linux go build -a -o miveil .
+RUN CGO_ENABLED=0 GOOS=linux go build -a -o pilarm .
 
 # Final image
 FROM scratch
@@ -19,6 +19,6 @@ FROM scratch
 # copy server files
 COPY --from=server-builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY --from=server-builder /usr/share/zoneinfo /usr/share/zoneinfo
-COPY --from=server-builder /app/miveil /app/ressources /app/
+COPY --from=server-builder /app/pilarm /app/ressources /app/
 
-ENTRYPOINT ["/app/miveil"]
+ENTRYPOINT ["/app/pilarm"]

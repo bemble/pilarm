@@ -11,7 +11,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"periph.io/x/host/v3"
 
-	"miveil/miveil"
+	"pilarm/pilarm"
 )
 
 func init() {
@@ -27,19 +27,19 @@ func init() {
 }
 
 func main() {
-	miveil := miveil.NewMiveil()
+	pilarm := pilarm.NewPilarm()
 
 	c := make(chan os.Signal)
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
 	go func() {
 		<-c
 		fmt.Println("")
-		miveil.Stop()
+		pilarm.Stop()
 		log.WithField("category", "general").Info("Stopped")
 		os.Exit(0)
 	}()
 
-	miveil.Start()
+	pilarm.Start()
 	log.WithField("category", "general").Info("Started")
 
 	for {

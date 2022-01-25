@@ -42,7 +42,7 @@ sudo raspi-config nonint do_i2c 0
 ####################################
 # Setup docker
 ####################################
-curl -o ${HOME}/docker-compose.yaml https://raw.githubusercontent.com/pierrecle/miveil/develop/docker-compose.yaml-sample
+curl -o ${HOME}/docker-compose.yaml https://raw.githubusercontent.com/pierrecle/pilarm/develop/docker-compose.yaml-sample
 sudo docker-compose up -d
 
 

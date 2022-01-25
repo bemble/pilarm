@@ -1,8 +1,8 @@
-# Miveil
+# Pilarm
 
-> Raspberry Pi alarm clock for childs, to let them know whether they can wake up or stay in bed.
+> Raspberry Pi alarm clock
 
-The idea was to have a simple device that let my child know whether he can wake up or should stay in bed without a light always on, which is the case of all child alarm clock for sell.
+Step one, for childs: the idea was to have a simple device that let my child know whether he can wake up or should stay in bed without a light always on, which is the case of all child alarm clock for sell.
 In action, it's pretty simple: a sonar listen for moves, when a move is detected, if the child should stay in bed, a (blue) led is turned on for 2 seconds, when he can wake up, another led (green) is turned on. Everyhting else is bonus (screen, animation).
 
 ## Hardware
@@ -28,11 +28,11 @@ Before writing data on the SD card, press on `SHIFT+CTRL+X` to enter default opt
 
 ## Setup and start
 
-`miveil` runs on docker. After your OS fresh install, tun the following script to install deps, configure the Pi and start the container.
+`pilarm` runs on docker. After your OS fresh install, tun the following script to install deps, configure the Pi and start the container.
 It will create a `docker-compose.yaml` file in home with the content of the sample given.
 
 ```bash
-wget https://raw.githubusercontent.com/pierrecle/miveil/develop/setup.sh  -O - | bash
+wget https://raw.githubusercontent.com/pierrecle/pilarm/develop/setup.sh  -O - | bash
 ```
 
 ## Development
@@ -49,7 +49,7 @@ go run main.go
 
 ## Todo
 
-- [x] `chore` move `miveil.go` somewhere else
+- [x] `chore` move `pilarm.go` somewhere else
 - [x] `feat` implement `hcsr04` using `periph.io`
 - [x] `feat` clean up on quit
 - [x] `feat` track when sonar is triggered

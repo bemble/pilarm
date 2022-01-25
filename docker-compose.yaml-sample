@@ -11,8 +11,8 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "/etc/localtime:/etc/localtime:ro"
       
-  miveil:
-    image: pierrecle/miveil:develop
-    container_name: miveil
+  pilarm:
+    image: pierrecle/pilarm:develop
+    container_name: pilarm
     restart: unless-stopped
     privileged: true

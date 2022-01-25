@@ -2,7 +2,7 @@ package devices
 
 import (
 	"image"
-	"miveil/core"
+	"pilarm/core"
 	"time"
 
 	"periph.io/x/conn/v3/i2c/i2creg"

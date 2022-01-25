@@ -5,7 +5,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"miveil/hardware"
+	"pilarm/hardware"
 )
 
 type Sonar struct {
