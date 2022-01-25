@@ -16,3 +16,5 @@ services:
     container_name: pilarm
     restart: unless-stopped
     privileged: true
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
