@@ -18,7 +18,8 @@ FROM scratch
 
 # copy server files
 COPY --from=server-builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
-COPY --from=server-builder /usr/share/zoneinfo /usr/share/zoneinfo
+COPY --from=server-builder /usr/share/zoneinfo /usr/share/zoneinfov
 COPY --from=server-builder /app/pilarm /app/ressources /app/
+ADD ./ressources /app/ressources
 
 ENTRYPOINT ["/app/pilarm"]

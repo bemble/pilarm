@@ -2,6 +2,7 @@ package pilarm
 
 import (
 	"pilarm/core"
+	"pilarm/core/config"
 	"pilarm/devices"
 	"time"
 
@@ -24,25 +25,38 @@ func makeTimestamp() int64 {
 	return time.Now().UnixNano() / (int64(time.Millisecond) / int64(time.Nanosecond))
 }
 
-func NewPilarm() Pilarm {
-	screen, _ := devices.NewScreen()
-	animation, _ := core.Gif2Animation(screen.Bounds().Dx(), screen.Bounds().Dy(), "./ressources/pikachu.gif", 1500*time.Millisecond)
-
+func NewPilarm() (*Pilarm, error) {
 	pilarm := Pilarm{
 		canWakeUpLed:       devices.NewLed(27), //rpi.P1_13
 		stayInBedLed:       devices.NewLed(17), //rpi.P1_11
 		sonar:              devices.NewSonar(6, 13),
-		screen:             screen,
+		screen:             nil,
 		currentLed:         nil,
 		scheduler:          core.NewScheduler(),
 		wasOn:              false,
 		sonarOnSince:       0,
-		canWakeUpAnimation: animation,
+		canWakeUpAnimation: nil,
+	}
+
+	screen, errorScreen := devices.NewScreen()
+	if errorScreen != nil {
+		log.WithError(errorScreen).Warn("No screen found")
+	}
+
+	if screen != nil {
+		errorAnimation := error(nil)
+		animation, errorAnimation := core.Gif2Animation(screen.Bounds().Dx(), screen.Bounds().Dy(), config.GetRessourcePath("pikachu.gif"), 1500*time.Millisecond)
+		if errorAnimation != nil {
+			log.WithError(errorAnimation).Warn("Animation not found")
+		} else {
+			pilarm.screen = screen
+			pilarm.canWakeUpAnimation = animation
+		}
 	}
 
 	pilarm.sonar.AddCallback(pilarm.sonarCallback)
 
-	return pilarm
+	return &pilarm, nil
 }
 
 func (m *Pilarm) sonarCallback(d float32) {
@@ -57,7 +71,9 @@ func (m *Pilarm) sonarCallback(d float32) {
 			led := m.stayInBedLed
 			if m.scheduler.CanWakeUp {
 				led = m.canWakeUpLed
-				go m.screen.PlayAnimation(m.canWakeUpAnimation)
+				if m.screen != nil {
+					go m.screen.PlayAnimation(m.canWakeUpAnimation)
+				}
 			}
 			if m.currentLed != nil && led != *m.currentLed {
 				m.currentLed.TurnOff()
@@ -94,5 +110,7 @@ func (m *Pilarm) Stop() {
 	m.canWakeUpLed.Stop()
 	m.stayInBedLed.Stop()
 	m.sonar.Stop()
-	m.screen.Stop()
+	if m.screen != nil {
+		m.screen.Stop()
+	}
 }

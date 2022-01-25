@@ -27,7 +27,7 @@ func init() {
 }
 
 func main() {
-	pilarm := pilarm.NewPilarm()
+	pilarm, _ := pilarm.NewPilarm()
 
 	c := make(chan os.Signal)
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
