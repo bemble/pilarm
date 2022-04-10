@@ -12,12 +12,12 @@ services:
       - "/etc/localtime:/etc/localtime:ro"
       
   pilarm:
-    image: pierrecle/pilarm:develop
+    image: ghcr.io/bemble/pilarm:develop
     container_name: pilarm
     restart: unless-stopped
     privileged: true
     devices:
       - "/dev/i2c-1:/dev/i2c-1"
     volumes:
-      - "${PWD}/pilarm_data:/app/data"
+      - "/home/pi/pilarm:/app/data"
       - "/etc/localtime:/etc/localtime:ro"

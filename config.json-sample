@@ -1,0 +1,27 @@
+{
+    "debug": true,
+    "leds": {
+        "can_wake_up_pin": 27,
+        "stay_in_bed_pin": 17,
+        "can_wake_up_display_time": 2,
+        "stay_in_bed_display_time": 1
+    },
+    "sonar": {
+        "trigger_pin": 6,
+        "echo_pin": 13,
+        "min_distance": 0.03,
+        "max_distance": 0.5
+    },
+    "times": {
+        "wake_up": {
+            "monday": "07:30",
+            "tuesday": "07:30",
+            "wednesday": "08:30",
+            "thursday": "07:30",
+            "friday": "07:30",
+            "saturday": "08:30",
+            "sunday": "08:30"
+        },
+        "to_bed": "19:30"
+    }
+}

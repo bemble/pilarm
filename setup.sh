@@ -42,7 +42,10 @@ sudo raspi-config nonint do_i2c 0
 ####################################
 # Setup docker
 ####################################
-curl -o ${HOME}/docker-compose.yaml https://raw.githubusercontent.com/pierrecle/pilarm/develop/docker-compose.yaml-sample
+echo "PWD=${HOME}" > .env
+curl -o ${HOME}/docker-compose.yaml https://raw.githubusercontent.com/bemble/pilarm/develop/docker-compose.yaml-sample
+mkdir ${HOME}/pilarm
+curl -o ${HOME}/pilarm/config.json https://raw.githubusercontent.com/bemble/pilarm/develop/config.json-sample
 sudo docker-compose up -d
 
 
