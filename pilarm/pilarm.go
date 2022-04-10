@@ -26,10 +26,12 @@ func makeTimestamp() int64 {
 }
 
 func NewPilarm() (*Pilarm, error) {
+	Config := config.Get()
+	log.Println(Config.Leds)
 	pilarm := Pilarm{
-		canWakeUpLed:       devices.NewLed(27), //rpi.P1_13
-		stayInBedLed:       devices.NewLed(17), //rpi.P1_11
-		sonar:              devices.NewSonar(6, 13),
+		canWakeUpLed:       devices.NewLed(Config.Leds.CanWakeUpPin), //rpi.P1_13
+		stayInBedLed:       devices.NewLed(Config.Leds.StayInBedPin), //rpi.P1_11
+		sonar:              devices.NewSonar(Config.Sonar.TriggerPin, Config.Sonar.EchoPin),
 		screen:             nil,
 		currentLed:         nil,
 		scheduler:          core.NewScheduler(),
@@ -60,7 +62,8 @@ func NewPilarm() (*Pilarm, error) {
 }
 
 func (m *Pilarm) sonarCallback(d float32) {
-	if d <= 0.6 {
+	Config := config.Get()
+	if d <= Config.Sonar.MaxDistance && d >= Config.Sonar.MinDistance {
 		if m.sonarOnSince == 0 {
 			m.sonarOnSince = makeTimestamp()
 			return
@@ -94,9 +97,9 @@ func (m *Pilarm) sonarCallback(d float32) {
 			m.wasOn = false
 			if m.currentLed != nil {
 				go func() {
-					ledDuration := 1 * time.Second
+					ledDuration := time.Duration(Config.Leds.StayInBedDisplayTime) * time.Second
 					if m.scheduler.CanWakeUp {
-						ledDuration = 2 * time.Second
+						ledDuration = time.Duration(Config.Leds.CanWakeUpDisplayTime) * time.Second
 					}
 
 					m.currentLed.TurnOnFor(ledDuration)

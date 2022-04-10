@@ -19,4 +19,5 @@ services:
     devices:
       - "/dev/i2c-1:/dev/i2c-1"
     volumes:
+      - "${PWD}/pilarm_data:/app/data"
       - "/etc/localtime:/etc/localtime:ro"

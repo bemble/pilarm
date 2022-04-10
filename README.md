@@ -35,6 +35,38 @@ It will create a `docker-compose.yaml` file in home with the content of the samp
 wget https://raw.githubusercontent.com/pierrecle/pilarm/develop/setup.sh  -O - | bash
 ```
 
+### Config file
+
+```json
+{
+    "debug": true,
+    "leds": {
+        "can_wake_up_pin": 27,
+        "stay_in_bed_pin": 17,
+        "can_wake_up_display_time": 2, // in seconds
+        "stay_in_bed_display_time": 1 // in seconds
+    },
+    "sonar": {
+        "trigger_pin": 6,
+        "echo_pin": 13,
+        "min_distance": 0.03, // in meters
+        "max_distance": 0.5 // in meters
+    },
+    "times": {
+        "wake_up": {
+            "monday": "07:30",
+            "tuesday": "07:30",
+            "wednesday": "08:30",
+            "thursday": "07:30",
+            "friday": "07:30",
+            "saturday": "08:30",
+            "sunday": "08:30"
+        },
+        "to_bed": "19:30"
+    }
+}
+```
+
 ## Development
 
 On your Pi, install go:
@@ -57,10 +89,11 @@ go run main.go
 - [ ] `feat` make RTC optional
 - [ ] `feat` make screen optional
 - [ ] `feat` remove hard coded values
-  - [ ] times
-  - [ ] pinning
-  - [ ] sonar maximum distance
-  - [ ] display duration
+  - [x] times
+  - [x] pinning
+  - [x] sonar maximum distance
+  - [x] led display duration
+  - [ ] screen display duration
   - [ ] animation
 - [ ] `feat` make different inputs configurable
 - [ ] `doc` make a video

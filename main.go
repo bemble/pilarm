@@ -11,11 +11,19 @@ import (
 	log "github.com/sirupsen/logrus"
 	"periph.io/x/host/v3"
 
+	"pilarm/core/config"
 	"pilarm/pilarm"
 )
 
 func init() {
-	log.SetLevel(log.DebugLevel)
+	Config := config.Get()
+
+	logLevel := log.InfoLevel
+	if Config.Debug {
+		logLevel = log.DebugLevel
+	}
+
+	log.SetLevel(logLevel)
 	log.SetFormatter(&nested.Formatter{
 		HideKeys:    true,
 		FieldsOrder: []string{"component", "category"},
@@ -27,6 +35,7 @@ func init() {
 }
 
 func main() {
+	log.Debug("Starting Pilarm in debug mode")
 	pilarm, _ := pilarm.NewPilarm()
 
 	c := make(chan os.Signal)
