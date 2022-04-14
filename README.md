@@ -41,16 +41,24 @@ wget https://raw.githubusercontent.com/pierrecle/pilarm/develop/setup.sh  -O - |
 {
     "debug": true,
     "leds": {
+        "are_present": true,
         "can_wake_up_pin": 27,
         "stay_in_bed_pin": 17,
-        "can_wake_up_display_time": 2, // in seconds
-        "stay_in_bed_display_time": 1 // in seconds
+        "can_wake_up_display_duration": 2, // in seconds
+        "stay_in_bed_display_duration": 1 // in seconds
+    },
+    "screen": {
+        "is_present": true,
+        "can_wake_up_animation_file": "pikachu.gif",
+        "can_wake_up_animation_duration": 1.5, // in seconds
+        "can_wake_up_display_time_duration": 5, // in seconds
+        "stay_in_bed_display_time_duration": 2 // in seconds
     },
     "sonar": {
         "trigger_pin": 6,
         "echo_pin": 13,
-        "min_distance": 0.03, // in meters
-        "max_distance": 0.5 // in meters
+        "min_distance": 0.03,
+        "max_distance": 0.5
     },
     "times": {
         "wake_up": {
@@ -62,7 +70,7 @@ wget https://raw.githubusercontent.com/pierrecle/pilarm/develop/setup.sh  -O - |
             "saturday": "08:30",
             "sunday": "08:30"
         },
-        "to_bed": "19:30"
+        "to_bed": "20:30"
     }
 }
 ```
@@ -87,15 +95,17 @@ go run main.go
 - [x] `feat` track when sonar is triggered
 - [ ] `feat` handle RTC `DS3231`
 - [ ] `feat` make RTC optional
-- [ ] `feat` make screen optional
-- [ ] `feat` remove hard coded values
+- [x] `feat` make screen optional
+- [x] `feat` make leds optional
+- [x] `feat` remove hard coded values
   - [x] times
   - [x] pinning
   - [x] sonar maximum distance
   - [x] led display duration
-  - [ ] screen display duration
-  - [ ] animation
-- [ ] `feat` make different inputs configurable
+  - [x] screen display duration
+  - [x] animation
+- [x] `feat` display current time after animation when can wake up
+- [x] `feat` display current time when should stay in bed and make it optional
 - [ ] `doc` make a video
 - [ ] `doc` draw pinning
 - [ ] `doc` write technical documentation
@@ -103,7 +113,6 @@ go run main.go
 - [ ] `hardware` make a 3D printable basic case
 - [ ] `chore` handle releases with workflow etc
 - [ ] `chore` write update process when not using portainer
-- [ ] `feat` display current time after animation when can wake up
 - [ ] `feat` create an OSD to display basic information (hostname, ip, wifi, current time)
 - [ ] `feat` add a physical buttons to handle OSD
 - [ ] `feat` create an API to change values

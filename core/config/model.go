@@ -1,17 +1,27 @@
 package config
 
 type Config struct {
-	Debug bool  `mapstructure:"debug"`
-	Leds  Leds  `mapstructure:"leds"`
-	Sonar Sonar `mapstructure:"Sonar"`
-	Times Times `mapstructure:"times"`
+	Debug  bool   `mapstructure:"debug"`
+	Leds   Leds   `mapstructure:"leds"`
+	Screen Screen `mapstructure:"screen"`
+	Sonar  Sonar  `mapstructure:"sonar"`
+	Times  Times  `mapstructure:"times"`
+}
+
+type Screen struct {
+	IsPresent                    bool    `mapstructure:"is_present"`
+	CanWakeUpAnimationFile       string  `mapstructure:"can_wake_up_animation_file"`
+	CanWakeUpAnimationDuration   float32 `mapstructure:"can_wake_up_animation_duration"`
+	CanWakeUpDisplayTimeDuration int     `mapstructure:"can_wake_up_display_time_duration"`
+	StayInBedDisplayTimeDuration int     `mapstructure:"stay_in_bed_display_time_duration"`
 }
 
 type Leds struct {
-	CanWakeUpPin         int `mapstructure:"can_wake_up_pin"`
-	StayInBedPin         int `mapstructure:"stay_in_bed_pin"`
-	CanWakeUpDisplayTime int `mapstructure:"can_wake_up_display_time"`
-	StayInBedDisplayTime int `mapstructure:"stay_in_bed_display_time"`
+	ArePresent               bool `mapstructure:"are_present"`
+	CanWakeUpPin             int  `mapstructure:"can_wake_up_pin"`
+	StayInBedPin             int  `mapstructure:"stay_in_bed_pin"`
+	CanWakeUpDisplayDuration int  `mapstructure:"can_wake_up_display_duration"`
+	StayInBedDisplayDuration int  `mapstructure:"stay_in_bed_display_duration"`
 }
 
 type Sonar struct {

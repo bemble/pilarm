@@ -10,9 +10,9 @@ type Led struct {
 	dev hardware.Led
 }
 
-func NewLed(portNumber int) Led {
+func NewLed(portNumber int) *Led {
 	dev := hardware.NewLed(portNumber)
-	return Led{dev: dev}
+	return &Led{dev: dev}
 }
 
 func (l *Led) TurnOn() error {

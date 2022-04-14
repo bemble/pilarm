@@ -1,10 +1,18 @@
 {
     "debug": true,
     "leds": {
+        "are_present": true,
         "can_wake_up_pin": 27,
         "stay_in_bed_pin": 17,
-        "can_wake_up_display_time": 2,
-        "stay_in_bed_display_time": 1
+        "can_wake_up_display_duration": 2,
+        "stay_in_bed_display_duration": 1
+    },
+    "screen": {
+        "is_present": true,
+        "can_wake_up_animation_file": "pikachu.gif",
+        "can_wake_up_animation_duration": 1.5,
+        "can_wake_up_display_time_duration": 5,
+        "stay_in_bed_display_time_duration": 2
     },
     "sonar": {
         "trigger_pin": 6,
@@ -22,6 +30,6 @@
             "saturday": "08:30",
             "sunday": "08:30"
         },
-        "to_bed": "19:30"
+        "to_bed": "20:00"
     }
 }

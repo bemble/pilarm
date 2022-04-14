@@ -2,9 +2,14 @@ package devices
 
 import (
 	"image"
+	"image/color"
 	"pilarm/core"
 	"time"
 
+	"github.com/golang/freetype/truetype"
+	"golang.org/x/image/font"
+	"golang.org/x/image/font/gofont/goregular"
+	"golang.org/x/image/math/fixed"
 	"periph.io/x/conn/v3/i2c/i2creg"
 	"periph.io/x/devices/v3/ssd1306"
 
@@ -48,6 +53,11 @@ func (s *Screen) PlayAnimation(animation *core.Animation) {
 		s.isPlaying = true
 		currentFrame := 0
 
+		img := image.NewGray(image.Rect(0, 0, s.dev.Bounds().Dx(), s.dev.Bounds().Dy()))
+		s.dev.Draw(img.Bounds(), img, image.Point{})
+		// Wake up screen
+		time.Sleep(50 * time.Millisecond)
+
 		for i := 0; i < len(animation.Sequence); i++ {
 			c := time.After(animation.FrameDuration[currentFrame])
 			img := animation.Frames[currentFrame]
@@ -61,6 +71,42 @@ func (s *Screen) PlayAnimation(animation *core.Animation) {
 		}
 		s.dev.Halt()
 		s.isPlaying = false
+	}
+}
+
+func (s *Screen) DisplayTimeFor(duration time.Duration) {
+	if !s.isPlaying {
+		s.isPlaying = true
+		str := time.Now().Format("15:04")
+		col := color.RGBA{255, 255, 255, 255}
+		img := image.NewGray(image.Rect(0, 0, s.dev.Bounds().Dx(), s.dev.Bounds().Dy()))
+		s.dev.Draw(img.Bounds(), img, image.Point{})
+		// Wake up screen
+		time.Sleep(50 * time.Millisecond)
+
+		imgWidth := img.Bounds().Dx()
+
+		fontTTF, _ := truetype.Parse(goregular.TTF)
+		face := truetype.NewFace(fontTTF, &truetype.Options{
+			Size: 48,
+			DPI:  72,
+		})
+		d := &font.Drawer{
+			Dst:  img,
+			Src:  image.NewUniform(col),
+			Face: face,
+		}
+		rect, _ := d.BoundString(str)
+		d.Dot = fixed.Point26_6{
+			X: (fixed.I(imgWidth) - rect.Max.X) / 2,
+			Y: fixed.I(48),
+		}
+		d.DrawString(str)
+
+		s.dev.Draw(img.Bounds(), img, image.Point{})
+		time.Sleep(duration)
+		s.isPlaying = false
+		s.dev.Halt()
 	}
 }
 

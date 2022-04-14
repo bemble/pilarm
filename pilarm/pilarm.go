@@ -10,8 +10,8 @@ import (
 )
 
 type Pilarm struct {
-	canWakeUpLed       devices.Led
-	stayInBedLed       devices.Led
+	canWakeUpLed       *devices.Led
+	stayInBedLed       *devices.Led
 	sonar              devices.Sonar
 	screen             *devices.Screen
 	currentLed         *devices.Led
@@ -29,8 +29,8 @@ func NewPilarm() (*Pilarm, error) {
 	Config := config.Get()
 	log.Println(Config.Leds)
 	pilarm := Pilarm{
-		canWakeUpLed:       devices.NewLed(Config.Leds.CanWakeUpPin), //rpi.P1_13
-		stayInBedLed:       devices.NewLed(Config.Leds.StayInBedPin), //rpi.P1_11
+		canWakeUpLed:       nil,
+		stayInBedLed:       nil,
 		sonar:              devices.NewSonar(Config.Sonar.TriggerPin, Config.Sonar.EchoPin),
 		screen:             nil,
 		currentLed:         nil,
@@ -40,19 +40,31 @@ func NewPilarm() (*Pilarm, error) {
 		canWakeUpAnimation: nil,
 	}
 
-	screen, errorScreen := devices.NewScreen()
-	if errorScreen != nil {
-		log.WithError(errorScreen).Warn("No screen found")
+	if Config.Leds.ArePresent && Config.Leds.StayInBedPin > 0 && Config.Leds.CanWakeUpPin > 0 {
+		pilarm.canWakeUpLed = devices.NewLed(Config.Leds.CanWakeUpPin)
+		pilarm.stayInBedLed = devices.NewLed(Config.Leds.StayInBedPin)
+
 	}
 
-	if screen != nil {
-		errorAnimation := error(nil)
-		animation, errorAnimation := core.Gif2Animation(screen.Bounds().Dx(), screen.Bounds().Dy(), config.GetRessourcePath("pikachu.gif"), 1500*time.Millisecond)
-		if errorAnimation != nil {
-			log.WithError(errorAnimation).Warn("Animation not found")
-		} else {
+	if Config.Screen.IsPresent {
+		screen, errorScreen := devices.NewScreen()
+		if errorScreen != nil {
+			log.WithError(errorScreen).Warn("No screen found")
+		}
+
+		if screen != nil {
 			pilarm.screen = screen
-			pilarm.canWakeUpAnimation = animation
+			Config := config.Get()
+
+			if Config.Screen.CanWakeUpAnimationFile != "" && Config.Screen.CanWakeUpAnimationDuration > 0 {
+				errorAnimation := error(nil)
+				animation, errorAnimation := core.Gif2Animation(screen.Bounds().Dx(), screen.Bounds().Dy(), config.GetRessourcePath(Config.Screen.CanWakeUpAnimationFile), time.Duration(Config.Screen.CanWakeUpAnimationDuration)*time.Second)
+				if errorAnimation != nil {
+					log.WithError(errorAnimation).Warn("Animation not found")
+				} else {
+					pilarm.canWakeUpAnimation = animation
+				}
+			}
 		}
 	}
 
@@ -81,15 +93,28 @@ func (m *Pilarm) sonarCallback(d float32) {
 			led := m.stayInBedLed
 			if m.scheduler.CanWakeUp {
 				led = m.canWakeUpLed
-				if m.screen != nil {
-					go m.screen.PlayAnimation(m.canWakeUpAnimation)
-				}
 			}
-			if m.currentLed != nil && led != *m.currentLed {
+			if m.currentLed != nil && led != m.currentLed {
 				m.currentLed.TurnOff()
 			}
-			m.currentLed = &led
-			m.currentLed.TurnOn()
+			if m.screen != nil {
+				go func() {
+					if m.scheduler.CanWakeUp && m.canWakeUpAnimation != nil {
+						m.screen.PlayAnimation(m.canWakeUpAnimation)
+					}
+					screenDuration := time.Duration(Config.Screen.StayInBedDisplayTimeDuration) * time.Second
+					if m.scheduler.CanWakeUp {
+						screenDuration = time.Duration(Config.Screen.CanWakeUpDisplayTimeDuration) * time.Second
+					}
+					if screenDuration > 0 {
+						m.screen.DisplayTimeFor(screenDuration)
+					}
+				}()
+			}
+			m.currentLed = led
+			if m.currentLed != nil {
+				m.currentLed.TurnOn()
+			}
 		}
 	} else {
 		m.sonarOnSince = 0
@@ -97,11 +122,10 @@ func (m *Pilarm) sonarCallback(d float32) {
 			m.wasOn = false
 			if m.currentLed != nil {
 				go func() {
-					ledDuration := time.Duration(Config.Leds.StayInBedDisplayTime) * time.Second
+					ledDuration := time.Duration(Config.Leds.StayInBedDisplayDuration) * time.Second
 					if m.scheduler.CanWakeUp {
-						ledDuration = time.Duration(Config.Leds.CanWakeUpDisplayTime) * time.Second
+						ledDuration = time.Duration(Config.Leds.CanWakeUpDisplayDuration) * time.Second
 					}
-
 					m.currentLed.TurnOnFor(ledDuration)
 					m.currentLed = nil
 				}()
@@ -116,8 +140,12 @@ func (m *Pilarm) Start() {
 }
 
 func (m *Pilarm) Stop() {
-	m.canWakeUpLed.Stop()
-	m.stayInBedLed.Stop()
+	if m.canWakeUpLed != nil {
+		m.canWakeUpLed.Stop()
+	}
+	if m.stayInBedLed != nil {
+		m.stayInBedLed.Stop()
+	}
 	m.sonar.Stop()
 	if m.screen != nil {
 		m.screen.Stop()
