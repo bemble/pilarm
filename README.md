@@ -32,6 +32,11 @@ dtoverlay=i2c-gpio,bus=4,i2c_gpio_delay_us=1,i2c_gpio_sda=24,i2c_gpio_scl=23
 
 This will create an I2C bus (#4), set GPIO23 as `SCL` and GPIO24 as `SDA`. I plugged RTC on this pins.
 
+
+### RTC `DS3231` powerled
+
+Once everyhting is setup and working, you can remove the RTC powerled using a flat screendriver.
+
 ## Install OS
 
 Use [Raspberry Pi Imager](https://www.raspberrypi.com/software/) to install the latest version of `Raspbian Lite`.
@@ -118,10 +123,10 @@ go run main.go
 - [x] `feat` implement `hcsr04` using `periph.io`
 - [x] `feat` clean up on quit
 - [x] `feat` track when sonar is triggered
-- [X] `feat` handle RTC `DS3231`
-- [ ] `feat` turn RTC power led off
+- [x] `feat` handle RTC `DS3231`
+- [x] `feat` turn RTC power led off
 - [ ] `feat` handle DST (summer/winter time)
-- [X] `feat` make RTC optional
+- [x] `feat` make RTC optional
 - [x] `feat` make screen optional
 - [x] `feat` make leds optional
 - [x] `feat` remove hard coded values
