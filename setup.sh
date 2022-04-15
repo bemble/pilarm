@@ -10,7 +10,7 @@ sudo apt upgrade -y
 ####################################
 # Deps
 ####################################
-sudo apt install -y vim git docker docker-compose curl
+sudo apt install -y vim git docker docker-compose curl i2c-tools jq
 
 
 ####################################
@@ -46,6 +46,19 @@ echo "PWD=${HOME}" > .env
 curl -o ${HOME}/docker-compose.yaml https://raw.githubusercontent.com/bemble/pilarm/develop/docker-compose.yaml-sample
 mkdir ${HOME}/pilarm
 curl -o ${HOME}/pilarm/config.json https://raw.githubusercontent.com/bemble/pilarm/develop/config.json-sample
+
+####################################
+# Detect hardware
+####################################
+# ssd1306 screen
+ssd1306=$(sudo i2cdetect -y 1 | grep "3c")
+if [ -z "${ssd1306}" ]; then
+  jq '.screen.is_present=false' ${HOME}/pilarm/config.json > /tmp/config_pilarm.json && mv /tmp/config_pilarm.json ${HOME}/pilarm/config.json
+fi
+
+####################################
+# Start docker
+####################################
 sudo docker-compose up -d
 
 
