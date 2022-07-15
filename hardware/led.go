@@ -8,12 +8,12 @@ import (
 )
 
 type Led struct {
-	port gpio.PinIO
+	pin  gpio.PinIO
 	IsOn bool
 }
 
 func NewLed(portNumber int) Led {
-	l := Led{port: gpioreg.ByName(strconv.Itoa(portNumber))}
+	l := Led{pin: gpioreg.ByName(strconv.Itoa(portNumber))}
 	l.turn(false, true)
 	return l
 }
@@ -27,7 +27,7 @@ func (l *Led) turn(on bool, force bool) error {
 	if !on {
 		newValue = gpio.Low
 	}
-	err := l.port.Out(newValue)
+	err := l.pin.Out(newValue)
 	if err == nil {
 		l.IsOn = on
 	}

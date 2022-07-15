@@ -117,6 +117,13 @@ Then, edit files (with VSCode and Go add-on, everyhting is way easier) and run:
 go run main.go
 ```
 
+### Build and run using docker
+
+```bash
+sudo docker build . -t pilarm_local -f Dockerfile
+sudo docker run  --device /dev/i2c-1 --privileged --volume $PWD/data:/app/data --volume /usr/bin/aplay:/usr/bin/aplay --rm pilarm_local
+```
+
 ## Todo
 
 - [x] `chore` move `pilarm.go` somewhere else
@@ -125,7 +132,7 @@ go run main.go
 - [x] `feat` track when sonar is triggered
 - [x] `feat` handle RTC `DS3231`
 - [x] `feat` turn RTC power led off
-- [ ] `feat` handle DST (summer/winter time)
+- [x] `feat` handle DST (summer/winter time)
 - [x] `feat` make RTC optional
 - [x] `feat` make screen optional
 - [x] `feat` make leds optional
@@ -138,17 +145,21 @@ go run main.go
   - [x] animation
 - [x] `feat` display current time after animation when can wake up
 - [x] `feat` display current time when should stay in bed and make it optional
+- [x] `feat` play sound when wake up
+- [ ] `feat` increase sound with time
+- [ ] `feat` add sun animation using leds when wake up
+- [ ] `feat` handle snooze
+- [ ] `feat` make durations of sonar interruptions configurable
 - [ ] `doc` make a video
 - [ ] `doc` draw pinning
 - [ ] `doc` write technical documentation
-- [ ] `hardware` make a PCB :warning: help needed
+- [ ] `hardware` make a PCB
 - [ ] `hardware` make a 3D printable basic case
 - [ ] `chore` handle releases with workflow etc
 - [ ] `chore` write update process when not using portainer
 - [ ] `feat` create an OSD to display basic information (hostname, ip, wifi, current time)
 - [ ] `feat` add a physical buttons to handle OSD
 - [ ] `feat` create an API to change values
-- [ ] `feat` handle wake up (morning where child should wake up at a precise time, for school etc)
 - [ ] `BONUS` handle HUE lights to wake up
 - [ ] `BONUS` front-end app
 - [ ] `BONUS` HASS/MQTT

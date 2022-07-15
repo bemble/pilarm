@@ -4,6 +4,7 @@ import (
 	"pilarm/core"
 	"pilarm/core/config"
 	"pilarm/devices"
+	"reflect"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -12,6 +13,7 @@ import (
 type Pilarm struct {
 	canWakeUpLed       *devices.Led
 	stayInBedLed       *devices.Led
+	audio              *devices.Audio
 	sonar              devices.Sonar
 	screen             *devices.Screen
 	currentLed         *devices.Led
@@ -19,6 +21,7 @@ type Pilarm struct {
 	wasOn              bool
 	sonarOnSince       int64
 	canWakeUpAnimation *core.Animation
+	wakeUpInProgress   bool
 }
 
 func makeTimestamp() int64 {
@@ -27,7 +30,6 @@ func makeTimestamp() int64 {
 
 func NewPilarm() (*Pilarm, error) {
 	Config := config.Get()
-	log.Println(Config.Leds)
 	pilarm := Pilarm{
 		canWakeUpLed:       nil,
 		stayInBedLed:       nil,
@@ -44,6 +46,10 @@ func NewPilarm() (*Pilarm, error) {
 		pilarm.canWakeUpLed = devices.NewLed(Config.Leds.CanWakeUpPin)
 		pilarm.stayInBedLed = devices.NewLed(Config.Leds.StayInBedPin)
 
+	}
+
+	if Config.Audio.IsPresent && Config.Audio.PowerPin > 0 {
+		pilarm.audio = devices.NewAudio(Config.Audio.PowerPin, config.GetRessourcePath(Config.Audio.AlarmSoundFile))
 	}
 
 	if Config.Screen.IsPresent {
@@ -68,6 +74,7 @@ func NewPilarm() (*Pilarm, error) {
 		}
 	}
 
+	pilarm.scheduler.AddCallback(pilarm.eachMinuteCallback)
 	pilarm.sonar.AddCallback(pilarm.sonarCallback)
 
 	return &pilarm, nil
@@ -116,6 +123,11 @@ func (m *Pilarm) sonarCallback(d float32) {
 				m.currentLed.TurnOn()
 			}
 		}
+		// Stop wake up alarm
+		if makeTimestamp()-m.sonarOnSince > 2000 && m.wakeUpInProgress {
+			m.audio.Stop()
+			m.wakeUpInProgress = false
+		}
 	} else {
 		m.sonarOnSince = 0
 		if m.wasOn {
@@ -134,6 +146,23 @@ func (m *Pilarm) sonarCallback(d float32) {
 	}
 }
 
+func (m *Pilarm) eachMinuteCallback(currentTme string) {
+	Config := config.Get()
+	weekday := time.Now().Weekday()
+	timesRv := reflect.ValueOf(Config.Times.WakeUp)
+	fv := timesRv.FieldByName(weekday.String())
+
+	if currentTme == fv.String() {
+		m.wakeUpInProgress = true
+		go func() {
+			if m.audio != nil {
+				m.audio.PlayAlarm()
+			}
+			m.wakeUpInProgress = false
+		}()
+	}
+}
+
 func (m *Pilarm) Start() {
 	go m.scheduler.Start()
 	go m.sonar.Start()
@@ -149,5 +178,8 @@ func (m *Pilarm) Stop() {
 	m.sonar.Stop()
 	if m.screen != nil {
 		m.screen.Stop()
+	}
+	if m.audio != nil {
+		m.audio.Stop()
 	}
 }

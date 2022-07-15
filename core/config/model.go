@@ -3,9 +3,16 @@ package config
 type Config struct {
 	Debug  bool   `mapstructure:"debug"`
 	Leds   Leds   `mapstructure:"leds"`
+	Audio  Audio  `mapstructure:"audio"`
 	Screen Screen `mapstructure:"screen"`
 	Sonar  Sonar  `mapstructure:"sonar"`
 	Times  Times  `mapstructure:"times"`
+}
+
+type Audio struct {
+	IsPresent      bool   `mapstructure:"is_present"`
+	PowerPin       int    `mapstructure:"power_pin"`
+	AlarmSoundFile string `mapstructure:"alarm_sound_file"`
 }
 
 type Screen struct {

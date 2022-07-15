@@ -9,7 +9,9 @@ import (
 )
 
 type Scheduler struct {
-	CanWakeUp bool
+	CanWakeUp           bool
+	eachMinuteCallbacks []func(string)
+	previousTime        string
 }
 
 func canWakeUp() bool {
@@ -32,14 +34,30 @@ func canWakeUp() bool {
 	return !(now.Before(maxSleeping) || now.After(minSleeping))
 }
 
+func getCurrentTime() string {
+	now := time.Now()
+	return now.Format("15:04")
+}
+
 func NewScheduler() Scheduler {
-	s := Scheduler{CanWakeUp: canWakeUp()}
+	s := Scheduler{CanWakeUp: canWakeUp(), eachMinuteCallbacks: []func(string){}, previousTime: ""}
 	return s
 }
 
 func (s *Scheduler) Start() {
 	for {
 		s.CanWakeUp = canWakeUp()
+		currentTime := getCurrentTime()
+		if currentTime != s.previousTime {
+			s.previousTime = currentTime
+			for i := 0; i < len(s.eachMinuteCallbacks); i++ {
+				s.eachMinuteCallbacks[i](currentTime)
+			}
+		}
 		time.Sleep(25 * time.Second)
 	}
+}
+
+func (s *Scheduler) AddCallback(f func(string)) {
+	s.eachMinuteCallbacks = append(s.eachMinuteCallbacks, f)
 }
